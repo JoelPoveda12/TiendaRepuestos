@@ -1,0 +1,511 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  TECHNICIAN
+  CUSTOMER
+}
+
+enum ProductCondition {
+  NEW
+  USED
+  REFURBISHED
+}
+
+enum ProductStatus {
+  ACTIVE
+  INACTIVE
+  OUT_OF_STOCK
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  PAYMENT_PROCESSING
+  PAID
+  PREPARING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum ServiceStatus {
+  RECEIVED
+  PENDING_DIAGNOSIS
+  IN_DIAGNOSIS
+  WAITING_APPROVAL
+  WAITING_PARTS
+  IN_REPAIR
+  IN_TESTING
+  READY_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+}
+
+enum AppointmentStatus {
+  REQUESTED
+  PENDING_CONFIRMATION
+  CONFIRMED
+  IN_PROCESS
+  COMPLETED
+  RESCHEDULED
+  CANCELLED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  phone     String?
+  role      Role     @default(CUSTOMER)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  customer Customer?
+  appointments Appointment[]
+  orders Order[]
+  serviceRequests ServiceRequest[]
+
+  @@index([email])
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  addresses Address[]
+  repairs   ServiceOrder[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Address {
+  id          String   @id @default(cuid())
+  customerId  String
+  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  
+  fullName    String
+  phone       String
+  email       String?
+  department  String   // Departamento
+  city        String   // Municipio/Ciudad
+  address     String   // Dirección completa
+  additionalInfo String?
+  
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Console {
+  id          String   @id @default(cuid())
+  name        String   @unique // e.g., "Nintendo Switch", "Nintendo 3DS"
+  slug        String   @unique
+  description String?
+  image       String?
+  active      Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  models      ConsoleModel[]
+  products    Product[]
+  appointments Appointment[]
+  serviceOrders ServiceOrder[]
+}
+
+model ConsoleModel {
+  id          String   @id @default(cuid())
+  consoleId   String
+  console     Console  @relation(fields: [consoleId], references: [id], onDelete: Cascade)
+  
+  name        String   // e.g., "Nintendo Switch OLED"
+  slug        String   
+  description String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  compatibilities Compatibility[]
+  appointments    Appointment[]
+  serviceOrders   ServiceOrder[]
+
+  @@unique([consoleId, slug])
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  image       String?
+  parentId    String?
+  parent      Category? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+  active      Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  products    Product[]
+}
+
+model Product {
+  id              String           @id @default(cuid())
+  name            String
+  slug            String           @unique
+  sku             String           @unique
+  description     String           @db.Text
+  price           Decimal          @db.Decimal(10, 2)
+  condition       ProductCondition @default(NEW)
+  status          ProductStatus    @default(ACTIVE)
+  stock           Int              @default(0)
+  minStock        Int              @default(5)
+  weight          Decimal?         @db.Decimal(10, 2)
+  
+  categoryId      String
+  category        Category         @relation(fields: [categoryId], references: [id])
+  consoleId       String?
+  console         Console?         @relation(fields: [consoleId], references: [id])
+  
+  brand           String?
+  warranty        String?
+  deliveryTime    String?
+  installationInfo String?         @db.Text
+  
+  isFeatured      Boolean          @default(false)
+  isNew           Boolean          @default(false)
+  isBestSeller    Boolean          @default(false)
+  
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  images          ProductImage[]
+  compatibilities Compatibility[]
+  orderItems      OrderItem[]
+  inventoryMovements InventoryMovement[]
+
+  @@index([slug])
+  @@index([sku])
+  @@index([categoryId])
+}
+
+model ProductImage {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  url       String
+  alt       String?
+  order     Int      @default(0)
+  isMain    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Compatibility {
+  id              String       @id @default(cuid())
+  productId       String
+  product         Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  consoleModelId  String
+  consoleModel    ConsoleModel @relation(fields: [consoleModelId], references: [id], onDelete: Cascade)
+  
+  verified        Boolean      @default(false)
+  notes           String?
+  
+  @@unique([productId, consoleModelId])
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique
+  userId          String?
+  user            User?       @relation(fields: [userId], references: [id])
+  
+  status          OrderStatus @default(PENDING_PAYMENT)
+  
+  // Customer info
+  customerName    String
+  customerEmail   String
+  customerPhone   String
+  customerId      String?
+  
+  // Shipping
+  shippingAddress String      @db.Text
+  shippingDept    String
+  shippingCity    String
+  shippingCost    Decimal     @db.Decimal(10, 2) @default(0)
+  
+  subtotal        Decimal     @db.Decimal(10, 2)
+  discount        Decimal     @db.Decimal(10, 2) @default(0)
+  total           Decimal     @db.Decimal(10, 2)
+  
+  couponCode      String?
+  paymentMethod   String?
+  paymentRef      String?
+  paidAt          DateTime?
+  
+  trackingNumber  String?
+  shippedAt       DateTime?
+  deliveredAt     DateTime?
+  
+  notes           String?     @db.Text
+  internalNotes   String?     @db.Text
+  
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  items           OrderItem[]
+  payments        Payment[]
+  shipment        Shipment?
+
+  @@index([orderNumber])
+  @@index([userId])
+  @@index([status])
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  
+  productName  String // Historical copy
+  productSku   String // Historical copy
+  unitPrice    Decimal @db.Decimal(10, 2)
+  quantity     Int
+  subtotal     Decimal @db.Decimal(10, 2)
+  
+  createdAt    DateTime @default(now())
+}
+
+model Payment {
+  id            String   @id @default(cuid())
+  orderId       String
+  order         Order    @relation(fields: [orderId], references: [id])
+  
+  amount        Decimal  @db.Decimal(10, 2)
+  method        String   // wompi, mercadopago, transfer, cod
+  reference     String   @unique
+  status        String   // pending, approved, rejected
+  responseData  Json?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Shipment {
+  id              String   @id @default(cuid())
+  orderId         String   @unique
+  order           Order    @relation(fields: [orderId], references: [id])
+  
+  carrier         String?  // coordinadora, servientrega, interrapidisimo
+  trackingNumber  String?
+  trackingUrl     String?
+  shippedAt       DateTime?
+  estimatedDelivery DateTime?
+  deliveredAt     DateTime?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model InventoryMovement {
+  id          String   @id @default(cuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id])
+  
+  type        String   // in, out, adjustment
+  quantity    Int
+  reason      String
+  reference   String?
+  performedBy String?
+  
+  createdAt   DateTime @default(now())
+}
+
+model Service {
+  id              String   @id @default(cuid())
+  name            String
+  slug            String   @unique
+  description     String   @db.Text
+  shortDesc       String?
+  priceNote       String?  // "Precio sujeto a evaluación técnica"
+  estimatedTime   String?
+  active          Boolean  @default(true)
+  order           Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  appointments    Appointment[]
+}
+
+model Appointment {
+  id                String            @id @default(cuid())
+  referenceNumber   String            @unique
+  userId            String?
+  user              User?             @relation(fields: [userId], references: [id])
+  
+  customerName      String
+  customerPhone     String
+  customerEmail     String?
+  
+  consoleId         String
+  console           Console           @relation(fields: [consoleId], references: [id])
+  consoleModelId    String
+  consoleModel      ConsoleModel      @relation(fields: [consoleModelId], references: [id])
+  serviceId         String?
+  service           Service?          @relation(fields: [serviceId], references: [id])
+  
+  problemDescription String           @db.Text
+  photos            String[]          @default([])
+  
+  appointmentDate   DateTime
+  appointmentTime   String
+  status            AppointmentStatus @default(REQUESTED)
+  
+  modality          String            @default("in-person")
+  notes             String?           @db.Text
+  internalNotes     String?           @db.Text
+  
+  confirmedBy       String?
+  confirmedAt       DateTime?
+  completedAt       DateTime?
+  
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  serviceOrder      ServiceOrder?
+
+  @@index([referenceNumber])
+  @@index([appointmentDate])
+  @@index([status])
+}
+
+model ServiceOrder {
+  id                String        @id @default(cuid())
+  orderNumber       String        @unique
+  customerId        String?
+  customer          Customer?     @relation(fields: [customerId], references: [id])
+  appointmentId     String?       @unique
+  appointment       Appointment?  @relation(fields: [appointmentId], references: [id])
+  
+  consoleId         String
+  console           Console       @relation(fields: [consoleId], references: [id])
+  consoleModelId    String
+  consoleModel      ConsoleModel  @relation(fields: [consoleModelId], references: [id])
+  
+  customerName      String
+  customerPhone     String
+  
+  receivedAt        DateTime      @default(now())
+  problemReported   String        @db.Text
+  physicalCondition String?       @db.Text
+  
+  status            ServiceStatus @default(RECEIVED)
+  
+  diagnosis         String?       @db.Text
+  workPerformed     String?       @db.Text
+  observations      String?       @db.Text
+  
+  laborCost         Decimal       @db.Decimal(10, 2) @default(0)
+  partsCost         Decimal       @db.Decimal(10, 2) @default(0)
+  totalCost         Decimal       @db.Decimal(10, 2) @default(0)
+  
+  approvedAt        DateTime?
+  startedAt         DateTime?
+  completedAt       DateTime?
+  deliveredAt       DateTime?
+  
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  partsUsed         ServicePart[]
+  statusHistory     ServiceStatusHistory[]
+
+  @@index([orderNumber])
+  @@index([status])
+}
+
+model ServicePart {
+  id             String       @id @default(cuid())
+  serviceOrderId String
+  serviceOrder   ServiceOrder @relation(fields: [serviceOrderId], references: [id], onDelete: Cascade)
+  
+  productId      String?
+  partName       String
+  partSku        String?
+  quantity       Int          @default(1)
+  unitPrice      Decimal      @db.Decimal(10, 2)
+  total          Decimal      @db.Decimal(10, 2)
+  
+  createdAt      DateTime     @default(now())
+}
+
+model ServiceStatusHistory {
+  id             String       @id @default(cuid())
+  serviceOrderId String
+  serviceOrder   ServiceOrder @relation(fields: [serviceOrderId], references: [id], onDelete: Cascade)
+  
+  status         ServiceStatus
+  notes          String?      @db.Text
+  changedBy      String?
+  
+  createdAt      DateTime     @default(now())
+}
+
+model ServiceRequest {
+  id          String   @id @default(cuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  
+  name        String
+  email       String
+  phone       String
+  console     String?
+  model       String?
+  queryType   String   // consultation, maintenance, repair, etc.
+  message     String   @db.Text
+  photos      String[] @default([])
+  
+  status      String   @default("PENDING") // PENDING, IN_PROGRESS, RESOLVED
+  response    String?  @db.Text
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model StoreConfig {
+  id              String   @id @default(cuid())
+  key             String   @unique
+  value           String   @db.Text
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model BusinessHours {
+  id          String   @id @default(cuid())
+  dayOfWeek   Int      // 0 = Sunday, 1 = Monday, etc.
+  openTime    String   // "09:00"
+  closeTime   String   // "18:00"
+  isClosed    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([dayOfWeek])
+}
