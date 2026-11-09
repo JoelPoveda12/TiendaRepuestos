@@ -1,0 +1,17 @@
+TIENDA NINTENDO PARTS & REPAIR COLOMBIA (versión inicial)
+
+Cómo usar:
+1. Abre index.html con doble clic en tu navegador.
+2. Para editarla, abre index.html con un editor de texto (Bloc de notas, VS Code).
+
+Qué configurar (busca "CONFIG" dentro de index.html):
+- whatsapp: tu número con 57 al inicio, por ejemplo "573001234567".
+- nombre: nombre de tu negocio.
+- horas: horarios disponibles para citas.
+
+Productos: edita la lista "P" con tus repuestos reales.
+Los datos actuales son de DEMOSTRACIÓN (precios y stock inventados).
+Servicios: edita la lista "SV".
+
+Nota: esta versión no tiene servidor, base de datos ni pagos en línea.
+Los pedidos y citas se envían por WhatsApp como solicitudes.

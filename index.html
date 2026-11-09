@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nintendo Parts & Repair Colombia | Repuestos y servicio técnico</title>
+  <meta name="description"
+    content="Repuestos, accesorios y servicio técnico especializado para consolas Nintendo Wii, Wii U, Switch y 3DS en Colombia.">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap"
+    rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="demo">Datos de demostración: los productos, precios y existencias son ejemplos y no corresponden a
+    artículos reales.</div>
+  <header>
+    <div class="wrap hd">
+      <a class="logo" href="#inicio" id="logo"></a>
+      <input class="srch" id="q" type="search" placeholder="Buscar por nombre, SKU o consola"
+        aria-label="Buscar productos">
+      <nav id="nav" aria-label="Principal">
+        <a href="#inicio">Inicio</a><a href="#tienda">Tienda</a><a href="#consolas">Consolas</a><a
+          href="#servicio">Servicio técnico</a><a href="#cita">Agendar cita</a><a href="#contacto">Contacto</a>
+      </nav>
+      <button class="cartb" id="openCart" aria-label="Abrir carrito">Carrito<span id="cnt">0</span></button>
+      <button class="menu" id="menu" aria-expanded="false">Menú</button>
+    </div>
+  </header>
+
+  <main id="inicio">
+    <div class="hero">
+      <div class="wrap">
+        <div>
+          <h1>Todo lo que necesitas para reparar tu Nintendo, en un solo lugar</h1>
+          <p>Encuentra repuestos compatibles, consulta con nuestro soporte técnico y programa tu servicio de
+            mantenimiento o reparación.</p>
+          <div class="acts">
+            <a class="btn" href="#tienda">Comprar repuestos</a>
+            <a class="btn o" style="color:#fff;border-color:#fff" href="#cita">Agendar mantenimiento</a>
+            <button class="btn wa" data-wa="general">Hablar con soporte técnico</button>
+          </div>
+        </div>
+        <div class="pcb">
+          <h3>Dale una segunda vida a tu Nintendo</h3>
+          <p style="font-size:1rem;margin:0 0 8px">Repuestos, accesorios y servicio técnico especializado para tus
+            consolas Nintendo.</p>
+          <ul>
+            <li><a href="#tienda" data-go="Nintendo Switch">Switch, Lite y OLED</a><span>›</span></li>
+            <li><a href="#tienda" data-go="Nintendo Wii U">Wii y Wii U</a><span>›</span></li>
+            <li><a href="#tienda" data-go="Familia 3DS">Familia 3DS y 2DS</a><span>›</span></li>
+            <li><a href="#solicitud" data-find="1">Encontrar mi repuesto</a><span>›</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <section id="consolas">
+      <div class="wrap">
+        <h2>Repuestos por consola</h2>
+        <div class="cons" id="cons"></div>
+      </div>
+    </section>
+
+    <section id="tienda" class="alt">
+      <div class="wrap">
+        <h2>Tienda</h2>
+        <div class="shop">
+          <aside class="filt" aria-label="Filtros">
+            <div><label for="fC">Consola</label><select id="fC"></select></div>
+            <div><label for="fT">Tipo de repuesto</label><select id="fT"></select></div>
+            <div><label for="fK">Condición</label><select id="fK">
+                <option value="">Todas</option>
+                <option>Nuevo</option>
+                <option>Usado</option>
+                <option>Reacondicionado</option>
+              </select></div>
+            <div><label for="fA">Disponibilidad</label><select id="fA">
+                <option value="">Todas</option>
+                <option>Disponible</option>
+                <option>Últimas unidades</option>
+                <option>Bajo pedido</option>
+                <option>Agotado</option>
+              </select></div>
+            <div><label for="fP">Precio máximo (COP)</label><input id="fP" type="number" min="0" step="1000"
+                placeholder="Sin límite"></div>
+            <button class="btn o s" id="clear">Limpiar filtros</button>
+          </aside>
+          <div>
+            <div class="top"><span id="res" aria-live="polite"></span>
+              <div style="width:220px"><label for="fS" class="note" style="margin:0">Ordenar</label><select id="fS">
+                  <option value="new">Más recientes</option>
+                  <option value="asc">Precio: menor a mayor</option>
+                  <option value="desc">Precio: mayor a menor</option>
+                </select></div>
+            </div>
+            <div class="grid" id="grid"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="servicio">
+      <div class="wrap">
+        <h2>Servicio técnico</h2>
+        <p style="max-width:62ch;margin-bottom:22px">Antes de prometer una reparación necesitamos un diagnóstico. Si el
+          costo depende de la falla, verás “Precio sujeto a evaluación técnica”.</p>
+        <div class="grid" id="svcs"></div>
+        <h3 style="margin:40px 0 14px">Cómo funciona</h3>
+        <ol class="steps">
+          <li><b>Cuéntanos la falla.</b><br>Solicita una cita o escríbenos por WhatsApp.</li>
+          <li><b>Diagnóstico.</b><br>Revisamos tu consola y te informamos el presupuesto.</li>
+          <li><b>Tú autorizas.</b><br>No hacemos trabajos con costo extra sin tu aprobación.</li>
+          <li><b>Reparación y pruebas.</b><br>Te avisamos cuando esté lista para entrega.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="cita" class="alt">
+      <div class="wrap two">
+        <div>
+          <h2>Agendar cita</h2>
+          <p>Elige el servicio y el horario que prefieres. Tu solicitud queda <b>pendiente de confirmación</b> hasta que
+            el técnico la acepte. Horarios en hora de Colombia (America/Bogota).</p>
+          <p class="note">Sin servidor conectado, la solicitud se envía por WhatsApp al técnico.</p>
+        </div>
+        <form class="f" id="fCita" novalidate>
+          <div><label for="cC">Consola</label><select id="cC" required></select></div>
+          <div><label for="cM">Modelo</label><select id="cM" required></select></div>
+          <div class="full"><label for="cS">Servicio</label><select id="cS" required></select></div>
+          <div class="full"><label for="cD">Describe el problema</label><textarea id="cD" rows="3" required></textarea>
+          </div>
+          <div><label for="cF">Fecha</label><input id="cF" type="date" required></div>
+          <div><label for="cH">Hora</label><select id="cH"></select></div>
+          <div><label for="cN">Nombre completo</label><input id="cN" required autocomplete="name"></div>
+          <div><label for="cT">WhatsApp o teléfono</label><input id="cT" type="tel" required autocomplete="tel"></div>
+          <div class="full"><button class="btn" type="submit">Enviar solicitud de cita</button>
+            <p class="note" id="cMsg" role="status"></p>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="wrap two">
+        <div>
+          <h2>Preguntas frecuentes</h2>
+          <details>
+            <summary>¿El repuesto es compatible con mi consola?</summary>
+            <p>La compatibilidad depende del modelo y la revisión. Si no está confirmada, verás “Compatibilidad por
+              verificar” y puedes consultarla antes de comprar.</p>
+          </details>
+          <details>
+            <summary>¿Hacen envíos fuera de Colombia?</summary>
+            <p>No. La tienda opera únicamente en Colombia. El costo de envío se confirma antes del pago.</p>
+          </details>
+          <details>
+            <summary>¿Cuánto cuesta una reparación?</summary>
+            <p>Depende del diagnóstico. No damos precios cerrados sin revisar la consola.</p>
+          </details>
+          <details>
+            <summary>¿Cómo pago?</summary>
+            <p>Los medios de pago (Wompi, Mercado Pago, transferencia) se habilitan cuando el negocio los configura.
+              Mientras tanto el pedido se envía como solicitud y se coordina el pago por WhatsApp.</p>
+          </details>
+        </div>
+        <div id="contacto">
+          <h2>Contacto</h2>
+          <form class="f" id="fCon" novalidate style="grid-template-columns:1fr">
+            <div id="solicitud"><label for="kN">Nombre completo</label><input id="kN" required></div>
+            <div><label for="kE">Correo electrónico</label><input id="kE" type="email" required></div>
+            <div><label for="kT">Tipo de consulta</label><select id="kT">
+                <option>Consultar un repuesto</option>
+                <option>Verificar compatibilidad</option>
+                <option>Solicitar diagnóstico</option>
+                <option>Consultar un pedido</option>
+                <option>Ayuda con una compra</option>
+              </select></div>
+            <div><label for="kD">Descripción</label><textarea id="kD" rows="3" required></textarea></div>
+            <div><button class="btn" type="submit">Enviar consulta</button>
+              <p class="note" id="kMsg" role="status"></p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap cols">
+      <div>
+        <h3 id="fName"></h3>
+        <p>Tienda independiente de repuestos y servicio técnico. No somos una tienda oficial ni distribuidor autorizado
+          de Nintendo. Nintendo y los nombres de sus consolas son marcas de sus propietarios.</p>
+      </div>
+      <div>
+        <h3>Políticas</h3>
+        <p>Privacidad, términos, envíos, cambios y garantías, y tratamiento de datos personales (Ley 1581 de 2012):
+          pendientes de redacción y revisión legal por el propietario.</p>
+      </div>
+      <div>
+        <h3>Operación</h3>
+        <p>Ventas y envíos solo en Colombia. Precios en pesos colombianos (COP). Horario: por configurar.</p>
+      </div>
+    </div>
+  </footer>
+
+  <button class="fab" data-wa="general" aria-label="Escribir por WhatsApp">WhatsApp</button>
+  <div class="ov" id="ov"></div>
+  <aside class="drawer" id="drawer" aria-label="Carrito de compras">
+    <div class="dh">
+      <h3>Tu carrito</h3><button class="lk" id="closeCart">Cerrar</button>
+    </div>
+    <div class="db" id="cartBody"></div>
+    <div class="df" id="cartFoot"></div>
+  </aside>
+  <dialog id="dlgOut">
+    <div class="in">
+      <h3>Finalizar pedido</h3>
+      <form class="f" id="fOut" novalidate style="margin-top:12px">
+        <div class="full"><label for="oN">Nombre completo</label><input id="oN" required autocomplete="name"></div>
+        <div><label for="oE">Correo electrónico</label><input id="oE" type="email" required></div>
+        <div><label for="oT">Teléfono</label><input id="oT" type="tel" required></div>
+        <div><label for="oD">Departamento</label><select id="oD" required></select></div>
+        <div><label for="oC">Municipio o ciudad</label><input id="oC" required></div>
+        <div class="full"><label for="oA">Dirección completa</label><input id="oA" required
+            autocomplete="street-address"></div>
+        <div class="full"><label for="oX">Indicaciones de entrega (opcional)</label><input id="oX"></div>
+        <div class="full" id="oSum"></div>
+        <div class="full"><button class="btn wa" type="submit">Enviar pedido por WhatsApp</button> <button class="lk"
+            type="button" id="oCancel">Cancelar</button>
+          <p class="note">Esto crea una solicitud de pedido, no un pago. El envío y el medio de pago se confirman
+            contigo antes de cobrar. Solo entregas en Colombia.</p>
+        </div>
+      </form>
+    </div>
+  </dialog>
+  <div id="toast" role="status"></div>
+  <script src="script.js"></script>
+</body>
+
+</html>
