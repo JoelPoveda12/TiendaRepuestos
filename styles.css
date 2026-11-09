@@ -57,7 +57,7 @@
     .wrap {
       max-width: 1180px;
       margin: 0 auto;
-      padding: 0 20px
+      padding: 0 20px;
     }
 
     section {
@@ -130,24 +130,27 @@
     }
 
     header {
-      position: sticky;
       top: 0;
       z-index: 20;
-      background: #fff;
-      border-bottom: 3px solid var(--red)
+      background: #ffffff;
+      border-bottom: 3px solid var(--red);
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+
     }
 
     .hd {
       display: flex;
       align-items: center;
       gap: 16px;
-      min-height: 64px
+      min-height: 64px;
+      padding: 10px;
     }
 
     .logo {
       font: 700 1.4rem 'Barlow Condensed', sans-serif;
       text-decoration: none;
-      white-space: nowrap
     }
 
     .logo b {
@@ -712,4 +715,10 @@
         transition: none !important;
         scroll-behavior: auto !important
       }
+    }
+
+    @media (max-width:508px) {
+        .logo{
+          flex-wrap: wrap;
+        }
     }
